@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import {
   Container,
   Card,
@@ -13,7 +13,9 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 const ParkingSlots: React.FC = () => {
-  const { numSlots } = useParams<{ numSlots?: string }>();
+  // const { numSlots } = useParams<{ numSlots?: string }>();
+  const location = useLocation();
+  const numSlots = location.state?.numSlots;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", carNumber: "" });
   const [bookedSlots, setBookedSlots] = useState<
@@ -30,7 +32,6 @@ const ParkingSlots: React.FC = () => {
         Array.from({ length: parseInt(numSlots!) }, (_, index) => index + 1)
       )
     );
-
     setBookedSlots(bookedSlotsFromStorage);
     setAvailableSlots(availableSlotsFromStorage);
   }, [numSlots]);
@@ -64,7 +65,6 @@ const ParkingSlots: React.FC = () => {
 
     for (let i = 1; i <= parseInt(numSlots!); i++) {
       const bookedSlot = bookedSlots.find((booking) => booking.slot === i);
-      const isAvailable = availableSlots.includes(i);
       const slotStyle = {
         marginTop: "10px",
         width: "200px",
@@ -141,6 +141,8 @@ const ParkingSlots: React.FC = () => {
           <form onSubmit={handleBookingSubmit}>
             <TextField
               label="Name"
+              inputProps={{"data-testid":"name-input"}}
+              
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
@@ -151,6 +153,7 @@ const ParkingSlots: React.FC = () => {
             />
             <TextField
               label="Car Number"
+              inputProps={{"data-testid":"car-number-input"}}
               value={formData.carNumber}
               onChange={(e) =>
                 setFormData({ ...formData, carNumber: e.target.value })
